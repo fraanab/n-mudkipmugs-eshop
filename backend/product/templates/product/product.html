@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<div id="product-page-display" class="page-container">
+    
+    <div id="product-page-img">
+        <img src="{{ product.get_thumbnail }}" alt="{{ product.name }}" id="product-img">
+    </div>
+
+    <div id="product-page-info">
+        <h1 class="product-page-name">{{ product.name }}</h1>
+        <p class="product-page-price"><span>Price:</span> $ {{ product.get_display_price }}</p>
+        {% if product.description %}
+            <p class="product-page-description"><span>Description:</span> {{ product.description }}</p>
+        {% endif %}
+        <a href="#" 
+            class="btn add-to-cart"
+            hx-get="{% url 'add_to_cart' product.id %}"
+            hx-target="#menu-cart-button"
+            hx-swap="outerHTML"
+        >Add to Cart</a>
+        <a href="{% url 'cart' %}" class="btn add-to-cart">> Cart</a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const addCartBtn = document.querySelector('.add-to-cart')
+    addCartBtn.addEventListener('click', () => {
+        alert('This item was added to your cart.')
+    })
+</script>
+{% endblock %}

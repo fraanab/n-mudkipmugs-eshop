@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% block title %}Update Status{% endblock %}
+{% block content %}
+<div class="update-form">
+	<form method="POST" action="">
+		{% csrf_token %}
+		{{ orderform }}
+		<!-- <button type="submit" class="btn">Confirm</button> -->
+		<input type="submit" name="Submit" value="Submit" class="btn">
+	</form>
+</div>
+{% endblock %}

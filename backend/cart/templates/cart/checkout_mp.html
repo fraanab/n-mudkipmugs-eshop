@@ -1,0 +1,159 @@
+{% extends 'core/base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<div class="page-container">
+
+    <h1 class="page-title">Checkout</h1>
+    <div class="mp-wrapper">
+        <form class="mp-form" id="myForm" method="POST" onsubmit="return false" action=".">
+            {% csrf_token %}
+            <div class="shipping-information form-container">
+                <h2>Shipping Information</h2>
+
+                <div class="row-container">
+                    <div class="form-field">
+                        <label for="fname">First Name</label>
+                        <input required name="first_name" type="text" id="fname" value="{{ request.user.first_name }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="lname">Last Name</label>
+                        <input required name="last_name" type="text" id="lname" value="{{ request.user.last_name }}">
+                    </div>
+                </div>
+
+                <div class="row-container">
+                    <div class="form-field">
+                        <label for="zip">Zip code</label>
+                        <input required name="zipcode" type="text" id="zip">
+                    </div>
+                    <div class="form-field">
+                        <label for="location">City/Place</label>
+                        <input required name="place" type="text" id="location">
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="address">Address</label>
+                    <input required name="address" type="text" id="address">
+                </div>
+
+                <h2>Contact Information</h2>
+
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input required name="email" type="email" id="email" value="{{ request.user.email }}">
+                </div>
+                <div class="form-field">
+                    <label for="phone">Phone Number</label>
+                    <input required name="phone" type="phone" id="phone">
+                </div>
+                <div id="errors"></div>
+            </div>
+
+            <div class="checkout-summary">
+                <h3>Summary</h3>
+                <ul>
+                    <li style="text-align: center;">
+                        <p class="total-plus-fees">Total: <span>(includes shipping fees)</span></p>
+                        $<span id="cart-total">{{ cart.get_total_cost }}</span>
+                    </li>
+                </ul>
+                <div id="submit-btn" class="cho-container"></div>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script>
+    let el = document.querySelector('#errors')
+    let submitBtn = document.querySelector('#submit-btn')
+    let form = document.getElementById("myForm");
+
+    const mp = new MercadoPago('{{ mppk }}', {
+        locale: 'es-AR'
+    });
+    function validateForm(data) {
+        let errors = []
+
+        if (data.first_name === '') {
+            errors.push('First name is empty')
+        }
+
+        if (data.last_name === '') {
+            errors.push('Last name is empty')
+        }
+
+        if (data.email === '') {
+            errors.push('Email is empty')
+        }
+
+        if (data.phone === '') {
+            errors.push('Phone is empty')
+        }
+
+        if (data.address === '') {
+            errors.push('Address is empty')
+        }
+
+        if (data.zipcode === '') {
+            errors.push('Zipcode is empty')
+        }
+
+        if (data.place === '') {
+            errors.push('Place is empty')
+        }
+
+        return errors
+    }
+    $(document).on('submit', '#myForm', function(e){
+        e.preventDefault()
+        $.ajax({
+            type:'POST',
+            url:'.',
+            data:{
+                first_name: $('#fname').val(),
+                last_name: $('#lname').val(),
+                email: $('#email').val(),
+                phone: $('#phone').val(),
+                address: $('#address').val(),
+                zipcode: $('#zip').val(),
+                place: $('#location').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(){
+                alert('Por favor, elija forma de pago:')
+            }
+        })
+    })
+    
+    fetch('mppreference/', {
+        headers:{
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => {
+        return response.json()
+    })
+    .then(data => {
+        mp.checkout({
+            preference: {
+                id: data['id']
+            },
+            render: {
+                container: '.cho-container',
+                label: 'Pagar',
+            }
+        })
+    })
+</script>
+
+{% endblock %}

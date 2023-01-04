@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block title %}Payment Methods{% endblock %}
+{% block content %}
+
+    <div class="choose-payment page-container">
+        <h1>Choose your payment method:</h1>
+
+        <p>Pay with Stripe</p>
+        <a href="{% url 'checkout_stripe' %}" class="btn">Stripe</a>
+
+        <p>Paga con Mercado Pago</p>
+        <a href="{% url 'checkout_mp' %}" class="btn">Mercado Pago</a>
+
+        <p>Pay with PayPal</p>
+        <a href="{% url 'checkout_paypal' %}" class="btn">PayPal</a>
+    </div>
+
+{% endblock %}

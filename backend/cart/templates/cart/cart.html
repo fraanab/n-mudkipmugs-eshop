@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<div class="cart-wrapper page-container" >
+
+    <div class="cart-summary">
+        <h3>Summary</h3>
+        <ul>
+            <li>
+                <p>Total: </p>
+                <span
+                    hx-get="{% url 'hx_cart_total' %}"
+                    hx-trigger="update-menu-cart from:body"
+                    hx-swap="innerHTML"
+                > $ 
+                    {% include 'cart/partials/cart_total.html' %}
+                </span>
+            </li>
+        </ul>
+        {% if cart|length > 0 %}
+            <a href="{% url 'choose_payment' %}" class="btn">Click to Checkout</a>
+        {% else %}
+            <a href="/" class="btn">Click to Checkout</a>
+        {% endif %}
+    </div>
+
+    <div id="cart-x-layout">
+        <div class="cart-products">
+            {% for item in cart %}
+                {% if cart|length > 0 %}
+                    {% include 'cart/partials/cart_item.html' %}
+                {% else %}
+                    <h2>Your cart is empty</h2>
+                    <a href="/" class="btn">Go shop</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="faq">
+            <span class="pokemonGBC">t</span>
+            <p>Items remain in the cart for up to 24 hours.</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %}{% endblock %} | Mudkip Mugs |</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/splidejs/4.1.0/css/splide.min.css" integrity="sha512-KhFXpe+VJEu5HYbJyKQs9VvwGB+jQepqb4ZnlhUF/jQGxYJcjdxOTf6cr445hOc791FFLs18DKVpfrQnONOB1g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% load static %}
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+	<nav id="navbar">
+		<a href="/" class="homebtn">Home</a>
+		<ul>
+			<li><a href="{% url 'contact' %}">Contact</a></li>
+			{% if request.user.is_authenticated %}
+				<li><a href="{% url 'logout' %}">Log Out</a></li>
+				<li><a id="myaccount-button" href="{% url 'myaccount' %}"><i class="fa-regular fa-user"></i></a></li>
+			{% else %}
+				<li><a href="{% url 'login' %}">Log In</a></li>
+			{% endif %}
+			<div 
+				hx-get="{% url 'hx_menu_cart' %}"
+            	hx-trigger="update-menu-cart from:body"
+            	hx-swap="innerHTML"
+            >
+				{% include 'cart/partials/menu_cart.html' %}
+			</div>
+		</ul>
+	</nav>
+	<div id="navbtn">≡</div>
+
+	{% block content %}
+	{% endblock %}
+
+	<footer>
+		<ul>
+			<li><a href="#" id="footer-about-link">About</a></li>
+			<li>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum iusto laboriosam, id laborum iste, vitae eveniet, similique, hic placeat dolores aut?</li>
+		</ul>
+		<ul>
+			<li>Links</li>
+			<li><a href="#">Instagram</a></li>
+			<li><a href="#">Twitter</a></li>
+			<li><a href="#">LinkedIn</a></li>
+			<li><a href="#">Amazon</a></li>
+		</ul>
+		<ul>
+			<li>FAQ</li>
+			<li><details open>
+				<summary>Refunds</summary>
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus!
+			</details></li>
+			<li><details>
+				<summary>Shipping</summary>
+				Lorem, ipsum dolor sit amet consectetur, adipisicing elit. Nulla nam aliquam modi!
+			</details></li>
+			<li><details>
+				<summary>Payments</summary>
+				PayPal, Stripe, MP
+			</details></li>
+			<li><details>
+				<summary>Contact</summary>
+				example@mail.com <br>
+				+1 111 11111 <br>
+				Lorem ipsum dolor sit amet consectetur.
+			</details></li>
+		</ul>
+	</footer>
+
+	<script src="https://unpkg.com/htmx.org@1.8.4"></script>
+	<script>
+		let navbtn = document.getElementById('navbtn')
+		let navbar = document.getElementById('navbar')
+		navbtn.addEventListener('click', ()=>{
+			if(navbar.style.top === '-9999px'){
+				navbar.style.top = '0'
+			}else{navbar.style.top ='-9999px'}
+		})
+	</script>
+	{% block scripts %}
+    {% endblock %}
+</body>
+</html>

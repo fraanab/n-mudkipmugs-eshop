@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<div class="page-container">
+
+    <h1 class="page-title">Checkout</h1>
+    <div class="checkout-wrapper">
+        <form class="payment-details" id="myForm" method="POST" onsubmit="return false" action=".">
+            {% csrf_token %}
+            <div class="shipping-information form-container">
+                <h2>Shipping Information</h2>
+
+                <div class="row-container">
+                    <div class="form-field">
+                        <label for="fname">First Name</label>
+                        <input required name="first_name" type="text" id="fname" value="{{ request.user.first_name }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="lname">Last Name</label>
+                        <input required name="last_name" type="text" id="lname" value="{{ request.user.last_name }}">
+                    </div>
+                </div>
+
+                <div class="row-container">
+                    <div class="form-field">
+                        <label for="zip">Zip code</label>
+                        <input required name="zipcode" type="text" id="zip">
+                    </div>
+                    <div class="form-field">
+                        <label for="location">City/Place</label>
+                        <input required name="place" type="text" id="location">
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="address">Address</label>
+                    <input required name="address" type="text" id="address">
+                </div>
+            </div>
+
+            <div class="contact-information form-container">
+                <h2>Contact Information</h2>
+
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input required name="email" type="email" id="email" value="{{ request.user.email }}">
+                </div>
+                <div class="form-field">
+                    <label for="phone">Phone Number</label>
+                    <input required name="phone" type="phone" id="phone">
+                </div>
+                <div id="errors"></div>
+            </div>
+            <button class="btn" type="submit" id="submitInfo">Continue</button>
+        </form>
+
+        <div class="checkout-summary">
+            <h3>Summary</h3>
+            <ul>
+                <li style="text-align: center;">
+                    <p class="total-plus-fees">Total: <span>(includes shipping fees)</span></p>
+                    $<span id="cart-total">{{ cart.get_total_cost }}</span>
+                </li>
+            </ul>
+            <div id="paypal-button-container" class="paypalbtn"></div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AQkqf5Ad-9tc8qiT_y5RBBJyQdWcFz_oyzzdgJYNYyVVPJVqewjXFPrzrPXVO1mefUi7gbdxO1S15yrF&components=buttons"></script>
+
+<script>
+let cartTotal = document.querySelector('#cart-total')
+
+let submitInfo = document.getElementById('submitInfo')
+let myForm = document.getElementById('myForm')
+let paypalButtonContainer = document.querySelector('.paypalbtn')
+
+paypal.Buttons({
+    style: {
+        layout: 'vertical',
+        color:  'blue',
+        shape:  'rect',
+        label:  'paypal'
+    },
+    createOrder: function(data, actions) {
+      // Set up the transaction
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: {{ cart.get_total_cost }}
+                }
+            }]
+        });
+    },
+    onApprove: function(data, actions) {
+        // This function captures the funds from the transaction.
+        return actions.order.capture().then(function(details) {
+        // This function shows a transaction success message to your buyer.
+            alert('Transaction completed by ' + details.payer.name.given_name);
+        });
+    },
+    // onCancel: function(data){
+    //     window.location.assign("/cart");
+    // }
+}).render('#paypal-button-container');
+
+$(document).on('submit', '#myForm', function(e){
+    e.preventDefault()
+    $.ajax({
+        type:'POST',
+        url:'/order/paypal_start_order/',
+        data:{
+            first_name: $('#fname').val(),
+            last_name: $('#lname').val(),
+            email: $('#email').val(),
+            phone: $('#phone').val(),
+            address: $('#address').val(),
+            zipcode: $('#zip').val(),
+            place: $('#location').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+        },
+        success: function(){
+            alert('Por favor, elija forma de pago:')
+            paypalButtonContainer.style.display = 'block'
+        }
+    })
+})
+
+</script>
+
+{% endblock %}

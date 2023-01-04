@@ -1,0 +1,6 @@
+<li class="splide__slide">
+	<a href="{% url 'product' product.slug %}" class="">
+		<img src="{{ product.get_thumbnail }}" alt="{{ product.name }}">
+	</a>
+	<p>Original <span>{{ product.name }}</span></p>
+</li>

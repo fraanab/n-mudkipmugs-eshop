@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% block title %}My Account{% endblock %}
+{% block content %}
+<div id="myaccount-wrapper" class="page-container">
+    <h1 style="text-align: center;">My account</h1>
+
+    <ul class="userinfo">
+        <li><strong>Name: </strong>{{ request.user.get_full_name }}</li>
+        <li><strong>Username: </strong>{{ request.user.username }}</li>
+        <li><strong>E-mail: </strong>{{ request.user.email }}</li>
+    </ul>
+
+    <a id="edit-link" class="btn" href="{% url 'edit_myaccount' %}">Edit</a>
+    
+    <hr>
+
+    <h2 style="text-align: center; padding-top: 25px;">My orders</h2>
+
+    <div class="userorders">
+        {% for order in request.user.orders.all %}
+                <div class="userorder">
+                    <li><a href="#">Order id: {{ order.id }}</a></li>
+                    <div class="mug">
+                    {% for item in order.items.all %}
+
+                        <li class="userorder-item">
+                            <a href="{% url 'product' item.product.slug %}"> <img src="{{ item.product.get_thumbnail }}" alt="{{ item.product.name }}"> </a>
+                            <a href="{% url 'product' item.product.slug %}">{{ item.product.name }}</a>
+                            <div class="userorder-info">
+                                <p>Quantity: {{ item.quantity }}</p>
+                                <p>Total: $ {{ item.get_total_price }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </div>
+                    <li style="padding-top: 15px;" class="userorder-info">
+                        Date: {{ order.created_at }} <br>
+                        Total: $ {{ order.get_total_price }}
+                    </li>
+                </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

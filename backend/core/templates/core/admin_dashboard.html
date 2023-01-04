@@ -1,0 +1,215 @@
+{% extends 'core/base.html' %}
+{% block title %}Welcome Admin{% endblock %}
+{% block content %}
+<div class="admin page-container">
+	<h2>Welcome back {{ request.user.username }}</h2>
+	<div class="admin-container">
+		<section class="flat-data">
+			<div><p>Products:</p><span>{{ product_count }}</span></div>
+			<div><p>Orders:</p><span>{{ order_count }}</span></div>
+			<div><p>Users:</p><span>{{ customer_count }}</span></div>
+			<div><p>Products Bought:</p><span>{{ order_item_count }}</span></div>
+			<div><p>Total Earnt:</p><span>$ {{ total_earnt }}</span></div>
+		</section>
+
+		<section class="charts">
+			<div class="chart">
+				<canvas id="myChart1"></canvas>
+				<i class="subtle fa-regular fa-hand-point-right"></i>
+			</div>
+			
+			<div class="chart">
+				<!-- this is also the yellow lines chart -->
+				<canvas id="myChart2"></canvas>
+				<i class="subtle fa-regular fa-hand-point-right"></i>
+			</div>
+
+			<div class="chart">
+				<canvas id="myChart3"></canvas>
+			</div>
+			<div class="tip">hold click for a better view <span class="pokemonGBC">j</span></div>
+		</section>
+
+		<section class="new-messages">
+			<h2>Invoice</h2>
+			<p class="subtle">( showing: 10 most recent messages )</p>
+			<table class="tg">
+				<thead>
+				  <tr>
+				    <th class="tg-oyn9">From</th>
+				    <th class="tg-oyn9">Subject</th>
+				    <th class="tg-oyn9">Message</th>
+				    <th class="tg-oyn9">Date</th>
+				    <th class="tg-oyn9">Action</th>
+				  </tr>
+				</thead>
+				<tbody>
+				  {% for mail in mails|slice:":10" %}
+				  	<tr>
+				  		<td>{{ mail.from_email }}</td>
+				  		<td>{{ mail.subject }}</td>
+				  		<td>{{ mail.message }}</td>
+				  		<td>{{ mail.sent_at }}</td>
+				  		<td><a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ mail.from_email }}&su={{ mail.subject }}" target="_blank" class="btn">Answer</a></td>
+				  	</tr>
+				  {% endfor %}
+				</tbody>
+			</table>
+		</section>
+
+		<div class="django-links">
+			<a href="{% url 'admin:index' %}" target="_blank" class="btn" id="django-link">Take me to the DJango page</a>
+		</div>
+
+		<section class="recent-orders">
+			<h2>Recent Orders</h2>
+			<p class="subtle">( showing: 10 most recent orders )</p>
+			<table class="tg">
+				<thead>
+					<tr>
+						<th class="tg-oyn9">Id</th>
+						<th class="tg-oyn9">User</th>
+						<th class="tg-oyn9">Customer Name</th>
+						<th class="tg-oyn9">Email</th>
+						<th class="tg-oyn9">Order: Date</th>
+						<th class="tg-oyn9">Order: Status</th>
+						<th class="tg-oyn9">Order: Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for order in orders|slice:":10" %}
+						<tr>
+							<td>{{ order.id }}</td>
+							<td>{{ order.user }}</td>
+							<td>{{ order.first_name }} {{ order.last_name }}</td>
+							<td>{{ order.email }}</td>
+							<td>{{ order.created_at }}</td>
+							<td class="status-change">
+							<!-- <td> -->
+								<div>Current Status: <strong>{{ order.status }}</strong></div>
+								<a href="{% url 'updateOrder' order.id %}" target="_blank" class="btn">Update</a>
+							</td>
+							<td>${{ order.paid_amount }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<p class="subtle">You might have to refresh the page to see changes</p>
+		</section>
+
+		<div class="django-links">
+			<a href="{% url 'admin:index' %}" target="_blank" class="btn" id="django-link">Take me to the DJango page</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.min.js" integrity="sha512-HyprZz2W40JOnIBIXDYHCFlkSscDdYaNe2FYl34g1DOmE9J+zEPoT4HHHZ2b3+milFBtiKVWb4sorDVVp+iuqA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="text/javascript">
+	const ctx = document.getElementById('myChart1');
+	const ctp = document.getElementById('myChart2');
+	const ctd = document.getElementById('myChart3')
+	
+	let ordersDataX = [ {% for items in orders|slice:":10" %} '{{ items }}', {% endfor %} ]
+	let ordersDataY = [ {% for items in orders|slice:':10' %} {{ items.paid_amount }}, {% endfor %} ]
+	let productNames = [ {% for items in product|slice:':10' %} '{{ items }}', {% endfor %} ]
+
+	let itemsDataX = [ {% for item in order_item|slice:":10" %} '{{ item.product }}', {% endfor %} ]
+	let itemsDataY = [{% for item in order_item|slice:":10" %} '{{ item.quantity }}', {% endfor %}]
+		// for item in order_item|slice:":10"    =>     is limiting the data displayed to 10
+
+	let bgcolors = ['blue','green','yellow','brown','red','black','azure','beige','aquamarine','darkgray','darkorange','darkred','deeppink','firebrick','indigo']
+
+	let lineChart = new Chart(ctp, {
+		type: 'line',
+	  data: {
+	  	labels: ordersDataX,
+	  	datasets: [
+	
+	  		{
+	    		label: '$ Amount paid for every order',
+	    		data: ordersDataY,
+	    		fill: false,
+	    		borderColor: 'gold',
+	    		tension: 0.1
+	  		},
+	
+	  	],
+		},
+		options: {
+	    scales: {
+	      y: {
+	        beginAtZero: true
+	      }
+	    }
+	  },
+	})
+
+	let barsChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: itemsDataX,
+	  	datasets: [{
+	  	  label: 'Units sold (per order)',
+	  	  data: itemsDataY,
+	  	  backgroundColor: bgcolors,
+	  	}],
+		},
+		options: {
+	    scales: {
+	      y: {
+	        beginAtZero: true
+	      }
+	    }
+	  },
+	})
+
+	// let barsChart2 = new Chart(ctp, {
+	// 	type: 'bar',
+	// 	data: {
+	// 		labels: ordersDataX,
+	//   	datasets: [{
+	//   	  label: '$ Amount paid for every order',
+	//   	  data: ordersDataY,
+	//   	  backgroundColor: 'lightblue',
+	//   	  // borderColor: 'blue',
+	//   	  // fill: false,
+	//   	  // tension: 0.1
+	//   	}]
+	// 	},
+	// 	options: {
+	//     scales: {
+	//       y: {
+	//         beginAtZero: true
+	//       }
+	//     }
+	//   },
+	// })
+
+	let doughnutChart = new Chart(ctd, {
+	  type: "pie",
+	  data: {
+	    labels: itemsDataX,
+	    datasets: [{
+	      data: itemsDataY,
+	      backgroundColor: bgcolors,
+	      hoverOffset: 1
+	    }]
+	  },
+	  options: {
+	    responsive: true,
+	    plugins: {
+	      legend: {
+	        position: 'top',
+	      },
+	      title: {
+	        display: true,
+	        text: 'Items bought'
+	      }
+	    }
+	  },
+	});
+
+</script>
+{% endblock %}

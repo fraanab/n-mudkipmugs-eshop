@@ -1,0 +1,31 @@
+{% if item %}
+    <div class="cart-product" id="cart-item-{{ item.product.id }}">
+        <a href="{% url 'product' item.product.slug %}">
+            <img src="{{ item.product.get_thumbnail }}" class="cart-product-img">            
+        </a>
+
+        <a href="{% url 'product' item.product.slug %}" class="cart-product-title">{{ item.product.name }}</a>
+    
+        <div class="cart-product-quantity">
+            <a 
+                href="#"
+                hx-get="{% url 'update_cart' item.product.id 'decrement' %}"
+                hx-target="#cart-item-{{ item.product.id }}"
+                hx-swap="outerHTML"
+            >
+                -
+            </a>
+            <span>{{ item.quantity }}</span>
+            <a 
+                href="#"
+                hx-get="{% url 'update_cart' item.product.id 'increment' %}"
+                hx-target="#cart-item-{{ item.product.id }}"
+                hx-swap="outerHTML"
+            >
+                +
+            </a>
+        </div>
+               
+        <span>$ {{ item.total_price }}</span>
+    </div>
+{% endif %}

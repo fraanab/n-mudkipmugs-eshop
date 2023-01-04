@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<div class="contact page-container">
+	<div class="pokemonGBC R">y</div>
+	<form action="" method="POST">
+		{% csrf_token %}
+		<label for="email-field">Email *</label>
+		<input id="email-field" type="email" name="email" required placeholder="Email">
+		<label for="subject">Subject</label>
+		<input type="text" name="subject" placeholder="Subject" id="subject">
+		<label for="text-message">Message *</label>
+		<textarea id="text-message" type="text" cols="30" rows="10" name="message" required placeholder="Message"></textarea>
+		<button class="btn" type="submit">Submit</button>
+	</form>
+	<div class="pokemonGBC L">e</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+	let contactForm = document.querySelector('form')
+	contactForm.addEventListener('submit', ()=>{
+		alert('Thank you. Your message was sent!')
+
+		window.location.assign("/")
+		// window.location = '127.0.0.1:8000'
+	})
+</script>
+{% endblock %}

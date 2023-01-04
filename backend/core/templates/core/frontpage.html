@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+{% block title %}Store{% endblock %}
+{% block content %}
+	<section class="splide" aria-label="Splide Basic HTML Example">
+	  <div class="splide__track">
+			<ul class="splide__list">
+				<li class="splide__slide off"><span>-20%</span>only this weekend <span class="pokemonGBC">i</span></li>
+				{% for product in products|slice:":3" %}
+					{% include 'product/partials/product_slide_item.html' %}
+				{% endfor %}
+			</ul>
+	  </div>
+	</section>
+
+	<div class="divider">
+		{% if request.user.is_authenticated %}
+		<a href=""><span class="arcade">Follow us on</span><i class="fa-brands fa-instagram"></i></a>
+		{% else %}
+		<a href="{% url 'login' %}"><span class="arcade">Log In</span> to begin shopping!</a>
+		{% endif %}
+	</div>
+
+	<div class="container">
+		<div class="images">
+			{% for product in products %}
+				{% include 'product/partials/product_list_item.html' %}
+			{% endfor %}
+			<a class="image-link">
+				<img class="image" intext="soon" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20130916223342%2Fultimate-pokemon-fanon%2Fimages%2Fthumb%2F8%2F85%2FMissingno_drawing_by_aerostat-d4krmly.jpg%2F500px-Missingno_drawing_by_aerostat-d4krmly.jpg&f=1&nofb=1&ipt=3ce265cf56a117764c39bd10f96b42858fb08c258421050a75fcb566576d9af7&ipo=images" alt="">
+			</a>
+			<a class="image-link">
+				<img class="image" intext="soon" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20130916223342%2Fultimate-pokemon-fanon%2Fimages%2Fthumb%2F8%2F85%2FMissingno_drawing_by_aerostat-d4krmly.jpg%2F500px-Missingno_drawing_by_aerostat-d4krmly.jpg&f=1&nofb=1&ipt=3ce265cf56a117764c39bd10f96b42858fb08c258421050a75fcb566576d9af7&ipo=images" alt="">
+			</a>
+			<a class="image-link">
+				<img class="image" intext="soon" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20130916223342%2Fultimate-pokemon-fanon%2Fimages%2Fthumb%2F8%2F85%2FMissingno_drawing_by_aerostat-d4krmly.jpg%2F500px-Missingno_drawing_by_aerostat-d4krmly.jpg&f=1&nofb=1&ipt=3ce265cf56a117764c39bd10f96b42858fb08c258421050a75fcb566576d9af7&ipo=images" alt="">
+			</a>
+		</div>
+		<div class="information">
+			<h1>More to come!</h1>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/splidejs/4.1.0/js/splide.min.js" integrity="sha512-J0BNj3Jkel+lOk5NSuRgZT5ArOfSRV/1Q3tmbzC/C2lhWCp9KyqRnQkfuhIP0C3yMvXq4AKEnHmP4VuMK8PU4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script>
+		var splide = new Splide( '.splide', {
+			type   : 'loop',
+  			perPage: 1,
+  			autoplay: true,
+		} );
+		splide.mount();
+	</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block title %}Edit Account{% endblock %}
+{% block content %}
+<div class="page-container">
+    <h1 style="text-align: center;">Edit account</h1>
+    <div id="myaccount-edit-wrapper">
+        <div class="pokemonGBC">2</div>
+
+        <form action="." method="post">
+            
+            {% csrf_token %}
+
+            <div class="editing-field">
+                <label>First name</label>
+                <input name="first_name" value="{{ request.user.first_name }}" type="text">
+            </div>
+
+            <div class="editing-field">
+                <label>Last name</label>
+                <input name="last_name" value="{{ request.user.last_name }}" type="text">
+            </div>
+
+            <div class="editing-field">
+                <label>Username</label>
+                <input name="username" value="{{ request.user.username }}" type="text">
+            </div>
+
+            <div class="editing-field">
+                <label>E-mail</label>
+                <input name="email" value="{{ request.user.email }}" type="email">
+            </div>
+
+            
+            <button class="btn" id="edit-submit">Submit</button>
+            
+        </form>
+    </div>
+    
+</div>
+{% endblock %}
