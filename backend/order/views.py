@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from django.contrib.auth.decorators import login_required
 load_dotenv()
 
-mpat = os.environ['MPAT']
+mpat = os.getenv('MPAT')
 sdk = mercadopago.SDK(mpat)
 
 @login_required
@@ -65,7 +65,7 @@ def mercadopago_start_order(request):
 			new_item = OrderItem(order=order, product=product, price=price, quantity=quantity)
 			new_item.save()
 	
-	mppk = os.environ['MPPK']
+	mppk = os.getenv('MPPK')
 	context = {
 		'mppk': mppk,
 	}

@@ -7,7 +7,6 @@ from django.contrib import admin
 # from product.views import product
 
 urlpatterns = [
-    path("__reload__/", include("django_browser_reload.urls")),
     path('', include('core.urls')),
     path('cart/', include('cart.urls')),
     path('order/', include('order.urls')),
