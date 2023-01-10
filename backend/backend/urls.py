@@ -7,8 +7,8 @@ from django.contrib import admin
 # from product.views import product
 
 urlpatterns = [
-    path('', include('core.urls')),
-    path('cart/', include('cart.urls')),
-    path('order/', include('order.urls')),
-    path('admin/', admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  path('', include('core.urls')),
+  path('cart/', include('cart.urls')),
+  path('order/', include('order.urls')),
+  path('admin/', admin.site.urls),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

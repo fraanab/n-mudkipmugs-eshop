@@ -24,7 +24,7 @@
                     {% for item in order.items.all %}
 
                         <li class="userorder-item">
-                            <a href="{% url 'product' item.product.slug %}"> <img src="{{ item.product.get_thumbnail }}" alt="{{ item.product.name }}"> </a>
+                            <a href="{% url 'product' item.product.slug %}"> <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"> </a>
                             <a href="{% url 'product' item.product.slug %}">{{ item.product.name }}</a>
                             <div class="userorder-info">
                                 <p>Quantity: {{ item.quantity }}</p>
